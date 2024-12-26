@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-import { Formik } from 'formik';
+import { Formik, FormikValues } from 'formik';
 import * as yup from 'yup';
 import {register} from '../helper/AccountApi'
 
@@ -28,7 +28,7 @@ const loginValidationSchema = yup.object().shape({
 export default function registerLayout() {
   const navigation = useNavigation();
 
-  function submit(values) {
+  function submit(values :FormikValues) {
 
       register(values.username, values.password).then(res => {
         if(res.ok) {
