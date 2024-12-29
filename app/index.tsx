@@ -5,13 +5,13 @@ import LoginLayout from "./login";
 export default function Index() {
   const [login, setLogin] = useState(false);
 
-  const handleUpdate = () => {
+  const handleLogin = () => {
     console.log("triggerd")
     setLogin(true)
 };
 
   if(login === false) {
-    return <LoginLayout login={() => handleUpdate()} />
+    return <LoginLayout handleLogin={() => handleLogin()} />
 } else {
   return (
       <View

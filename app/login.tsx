@@ -1,9 +1,11 @@
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-import { Formik } from 'formik';
+import { Formik, FormikValues } from 'formik';
 import * as yup from 'yup';
 import React, { useEffect } from 'react';
+import {login} from '../helper/AccountApi'
+import UserProfile from '../helper/UserProfile'
 
 const loginValidationSchema = yup.object().shape({
   username: yup
@@ -15,8 +17,38 @@ const loginValidationSchema = yup.object().shape({
 });
 
 
-export default function loginLayout({login}) {
+export default function loginLayout({handleLogin}) {
   const navigation = useNavigation();
+
+  function submit(values :FormikValues) {
+      login(values.username, values.password).then(res => {
+        if(res.ok) {
+          const contentType = res.headers.get("content-type");
+          if (!contentType || !contentType.includes("application/json")) {
+            throw new TypeError("Oops, we haven't got JSON!");
+          }
+          //@TODO: handle cookie
+          console.log(res.headers)
+          return res.json();
+        } 
+    
+        if(res.status === 401) {
+          alert("Username or Password invalid!")
+          throw new TypeError("Username or Password invalid!");
+        }
+  
+      })
+      .then(data => {
+        alert("Login successful!")    
+        UserProfile.setUserUUID(data.id)
+        console.log(data)
+      })
+      .catch(err => {
+        //@TODO: handle various status exceptions
+        alert("Something went wrong. Please contact Support. Thanks!")
+        console.log(err)
+      });
+    }
 
   return (
     <View style={styles.container}>
@@ -24,7 +56,7 @@ export default function loginLayout({login}) {
       <Formik
         validationSchema={loginValidationSchema}
         initialValues={{ username: '', password: '' }}
-        onSubmit={() => {alert("qweqr")}}
+        onSubmit={submit}
       >
         {({
           handleChange,
