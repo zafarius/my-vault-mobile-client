@@ -3,14 +3,14 @@ import React, { Component, useState } from 'react';
 import LoginLayout from "./login";
 
 export default function Index() {
-  const [login, setLogin] = useState(false);
+  const [loginStatus, setLoginStatus] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = (username: String) => {
     console.log("triggerd")
-    setLogin(true)
+    setLoginStatus(true)
 };
 
-  if(login === false) {
+  if(loginStatus === false) {
     return <LoginLayout handleLogin={() => handleLogin()} />
 } else {
   return (

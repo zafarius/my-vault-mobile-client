@@ -29,6 +29,3 @@ export async function login(username: String, password: String) :Promise<Respons
 
   return await fetch(url, options)
 }
-
-//zafos
-//123123123!
