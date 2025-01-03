@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Formik, FormikValues } from 'formik';
 import * as yup from 'yup';
 import React, { useEffect } from 'react';
-import {login} from '../helper/AccountApi'
+import { login } from '../helper/AccountApi'
 import UserProfile from '../helper/UserProfile'
 
 const loginValidationSchema = yup.object().shape({
@@ -17,38 +17,38 @@ const loginValidationSchema = yup.object().shape({
 });
 
 
-export default function loginLayout({handleLogin}) {
+export default function loginLayout({ loginState }) {
   const navigation = useNavigation();
 
-  function submit(values :FormikValues) {
-      login(values.username, values.password).then(res => {
-        if(res.ok) {
-          const contentType = res.headers.get("content-type");
-          if (!contentType || !contentType.includes("application/json")) {
-            throw new TypeError("Oops, we haven't got JSON!");
-          }
-          //@TODO: handle cookie
-          console.log(res.headers)
-          return res.json();
-        } 
-    
-        if(res.status === 401) {
-          alert("Username or Password invalid!")
-          throw new TypeError("Username or Password invalid!");
+  function submit(values: FormikValues) {
+    login(values.username, values.password).then(res => {
+      if (res.ok) {
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new TypeError("Oops, we haven't got JSON!");
         }
-  
-      })
+
+        return res.json();
+      }
+
+      if (res.status === 401) {
+        throw new TypeError("Username or Password invalid!")
+      }
+
+      throw new TypeError("Something went wrong. Please contact Support. Thanks!")
+    })
       .then(data => {
-        alert("Login successful!")    
+        alert("Login successful!")
         UserProfile.setUserUUID(data.id)
-        console.log(data)
+        UserProfile.setUsername(data.username)
+
+        loginState(true)
       })
       .catch(err => {
-        //@TODO: handle various status exceptions
-        alert("Something went wrong. Please contact Support. Thanks!")
+        alert(err.message)
         console.log(err)
       });
-    }
+  }
 
   return (
     <View style={styles.container}>

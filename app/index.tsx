@@ -1,30 +1,58 @@
 import { Text, View, Button } from "react-native";
 import React, { Component, useState } from 'react';
 import LoginLayout from "./login";
+import UserProfile from '../helper/UserProfile'
+import { logout } from '../helper/AccountApi'
 
 export default function Index() {
   const [loginStatus, setLoginStatus] = useState(false);
 
-  const handleLogin = (username: String) => {
+  const loginState = (status: boolean) => {
     console.log("triggerd")
-    setLoginStatus(true)
-};
+    setLoginStatus(status)
+  };
 
-  if(loginStatus === false) {
-    return <LoginLayout handleLogin={() => handleLogin()} />
-} else {
-  return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "flex-start",
-          alignItems: "center",
-        }}
-      >
-        <Text>Willkommen bei my-vault!</Text>
+  if (loginStatus === false) {
+    return <LoginLayout loginState={(status: boolean) => loginState(status)} />
+  } else {
 
-      </View>
+    return (
+      <>
+        <View
+          style={{
+            alignItems: "flex-end",
+          }}
+        >
+          <Button
+            onPress={() => {
+              logout()
+                .then(res => {
+                  if (res.ok) {
+                    UserProfile.setUserUUID("")
+                    UserProfile.setUsername("")
+                    setLoginStatus(false)
+                  }
+                })
+                .catch(err => {
+                  console.log(err)
+                })
+            }}
+            title="Logout"
+            color="#841584"
+            accessibilityLabel="Learn more about this purple button"
+          />
+        </View>
 
-  );
-}
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "flex-start",
+            alignItems: "center",
+          }}
+        >
+          <Text>Willkommen bei my-vault - {UserProfile.getUsername()}!</Text>
+        </View>
+      </>
+    );
+  }
 }

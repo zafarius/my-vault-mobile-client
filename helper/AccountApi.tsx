@@ -1,10 +1,11 @@
 import React from 'react';
+import UserProfile from './UserProfile';
 
 //@TODO: make IP configurable
-const url = "http://172.27.117.143:8080/api/v1/account";
+const baseUrl = "http://172.27.117.143:8080"
 
 
-export async function register(username: String, password: String) :Promise<Response> {
+export async function register(username: String, password: String): Promise<Response> {
   const options = {
     method: 'POST',
     headers: {
@@ -16,10 +17,10 @@ export async function register(username: String, password: String) :Promise<Resp
     })
   };
 
-  return await fetch(url, options)
+  return await fetch(baseUrl + "/api/v1/account", options)
 }
 
-export async function login(username: String, password: String) :Promise<Response> {
+export async function login(username: String, password: String): Promise<Response> {
   const options = {
     method: 'GET',
     headers: {
@@ -27,5 +28,13 @@ export async function login(username: String, password: String) :Promise<Respons
     },
   };
 
-  return await fetch(url, options)
+  return await fetch(baseUrl + "/api/v1/account", options)
+}
+
+export async function logout(): Promise<Response> {
+  const options = {
+    method: 'GET',
+  };
+
+  return await fetch(baseUrl + "/logout", options)
 }
